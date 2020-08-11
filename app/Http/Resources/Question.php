@@ -10,7 +10,7 @@ class Question extends JsonResource
   {
     return [
       'id' => $this->id,
-      'title' => $this->content,
+      'content' => $this->content,
       'answers' => $this->answers
     ];
   }

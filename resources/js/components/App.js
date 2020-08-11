@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import {
   BrowserRouter as Router,
@@ -7,19 +7,6 @@ import {
   Switch,
   useParams
 } from "react-router-dom"
-
-const QUESTIONS = [
-  {
-    id: 1,
-    content: "What's your name?",
-    answer: "I'm the Goat!"
-  },
-  {
-    id: 2,
-    content: "How old are you?",
-    answer: "Ask Chuck!"
-  }
-]
 
 function Question() {
   const { questionId } = useParams()
@@ -39,7 +26,17 @@ function Question() {
 }
 
 function Questions() {
-  const [questions, setQuestions] = useState(QUESTIONS)
+  const [questions, setQuestions] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      fetch('/api/questions')
+        .then(response => response.json())
+        .then(data => setQuestions(data.data))
+    }
+
+    fetchData()
+  }, [])
 
   const questionsElement = questions.map((question) => {
     return (
