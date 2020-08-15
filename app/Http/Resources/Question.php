@@ -15,7 +15,7 @@ class Question extends JsonResource
       'content' => $this->content,
       'answers' => AnswerResource::collection(
         $this->answers()
-             ->orderBy('created_at', 'DESC')
+             ->orderBy('created_at', 'ASC')
              ->get()
       )
     ];
