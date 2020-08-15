@@ -17,7 +17,7 @@ Route::post('/questions', function (Request $request) {
 });
 
 Route::get('/questions', function () {
-  return QuestionResource::collection(Question::all());
+  return QuestionResource::collection(Question::orderBy('created_at', 'DESC')->get());
 });
 
 Route::get('/questions/{question}', function (Question $question) {
