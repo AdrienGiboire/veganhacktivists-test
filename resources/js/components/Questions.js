@@ -13,11 +13,11 @@ export default function Questions() {
     fetchData()
   }, [])
 
-  const [newQuestion, setNewQuestion] = useState('')
+  const [newQuestion, setNewQuestion] = useState({})
   useEffect(() => {
-    const postData = async () => {
-      if (newQuestion === '') return
+    if (!newQuestion.content) return
 
+    const postData = async () => {
       fetch('/api/questions', {
         method: 'POST',
         body: JSON.stringify({ ...newQuestion }),
@@ -51,7 +51,7 @@ export default function Questions() {
   return (
     <Fragment>
       <form onSubmit={handleSubmit}>
-        <input type="text" name="content" defaultValue={newQuestion} />
+        <input type="text" name="content" defaultValue={newQuestion.content} />
       </form>
       <ul>{questionsElement}</ul>
     </Fragment>
