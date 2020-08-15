@@ -8,8 +8,6 @@ class Question extends Model
 {
   protected $fillable = ['content'];
 
-  public $timestamps = false;
-
   public function answers()
   {
     return $this->hasMany('App\Answer');
