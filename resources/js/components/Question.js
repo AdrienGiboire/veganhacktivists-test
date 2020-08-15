@@ -1,5 +1,5 @@
-import React, { Fragment, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import React, { Fragment, useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
 
 export default function Question() {
   const { questionId } = useParams()
@@ -15,21 +15,51 @@ export default function Question() {
     fetchData()
   }, [])
 
+  const [newAnswer, setNewAnswer] = useState('')
+  useEffect(() => {
+    const postData = async () => {
+      if (newAnswer === '') return
+
+      fetch(`/api/questions/${question.id}/answers`, {
+        method: 'POST',
+        body: JSON.stringify({ ...newAnswer }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then(response => response.ok && response.json())
+        .then(data => setQuestion({ ...question, answers: [ data, ...question.answers ] }))
+    }
+
+    postData()
+  }, [newAnswer])
+
+  const handleSubmit = event => {
+    event.preventDefault()
+
+    const field = event.target.elements['content']
+
+    setNewAnswer({ content: field.value })
+
+    field.value = ''
+  }
+
   return (
     <Fragment>
       <p className="text-right">
         <Link to="/">Back</Link>
       </p>
 
+      <form onSubmit={handleSubmit}>
+        <input type="text" name="content" defaultValue={newAnswer} />
+      </form>
+
       {
         question &&
           <div>
             <p><strong>{question.content}</strong></p>
-            {question.answers && question.answers.map(answer => <p>{answer.content}</p>)}
+            {question.answers && question.answers.map(answer => <p key={`answer-${answer.id}`}>{answer.content}</p>)}
           </div>
       }
     </Fragment>
   )
 }
-
 
