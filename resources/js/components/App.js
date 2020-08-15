@@ -1,57 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
 import {
   BrowserRouter as Router,
-  Link,
   Route,
-  Switch,
-  useParams
+  Switch
 } from "react-router-dom"
 
-function Question() {
-  const { questionId } = useParams()
-
-  const question = QUESTIONS.filter(question => question.id === parseInt(questionId))[0]
-
-  return (
-    <React.Fragment>
-      <p className="text-right">
-        <Link to="/">Back</Link>
-      </p>
-
-      <p><strong>{question.content}</strong></p>
-      <p>{question.answer}</p>
-    </React.Fragment>
-  )
-}
-
-function Questions() {
-  const [questions, setQuestions] = useState([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      fetch('/api/questions')
-        .then(response => response.json())
-        .then(data => setQuestions(data.data))
-    }
-
-    fetchData()
-  }, [])
-
-  const questionsElement = questions.map((question) => {
-    return (
-      <li key={`question-${question.id}`}>
-        <Link to={`/question/${question.id}`}>{question.content}</Link>
-      </li>
-    )
-  })
-
-  return (
-    <React.Fragment>
-      <ul>{questionsElement}</ul>
-    </React.Fragment>
-  )
-}
+import Question from './Question'
+import Questions from './Questions'
 
 function App() {
   return (
