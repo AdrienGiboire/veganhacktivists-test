@@ -42,7 +42,7 @@ export default function Questions() {
 
   const questionsElement = questions.map((question) => {
     return (
-      <li key={`question-${question.id}`}>
+      <li key={`question-${question.id}`} className="list-group-item">
         <Link to={`/question/${question.id}`}>{question.content}</Link>
       </li>
     )
@@ -50,10 +50,19 @@ export default function Questions() {
 
   return (
     <Fragment>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="content" defaultValue={newQuestion.content} />
-      </form>
-      <ul>{questionsElement}</ul>
+      <div className="row">
+        <form onSubmit={handleSubmit} className="w-100 mb-2 pb-2">
+          <div className="form-group">
+            <textarea className="form-control form-control-lg" name="content" defaultValue={newQuestion.content} placeholder="Time for questions!" />
+          </div>
+
+          <input type="submit" className="btn btn-primary btn-lg w-100" value="Ask!" />
+        </form>
+      </div>
+
+      <div className="row">
+        <ul className="list-group w-100">{questionsElement}</ul>
+      </div>
     </Fragment>
   )
 }

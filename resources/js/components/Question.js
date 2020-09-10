@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, Redirect, useParams } from 'react-router-dom'
 
 export default function Question() {
   const { questionId } = useParams()
@@ -8,8 +8,14 @@ export default function Question() {
   useEffect(() => {
     const fetchData = async () => {
       fetch(`/api/questions/${questionId}`)
-        .then(response => response.json())
-        .then(data => setQuestion(data.data))
+        .then(response => {
+          if (response.status === 404) return
+          return response.json()
+        })
+        .then(data => {
+          if (!data) return setQuestion()
+          return setQuestion(data.data)
+        })
     }
 
     fetchData()
@@ -26,11 +32,24 @@ export default function Question() {
         headers: { 'Content-Type': 'application/json' }
       })
         .then(response => response.ok && response.json())
-        .then(data => setQuestion({ ...question, answers: [ data, ...question.answers ] }))
+        .then(data => setQuestion({ ...question, answers: [ ...question.answers, data ] }))
     }
 
     postData()
   }, [newAnswer])
+
+  let answers
+  if (question && question.answers) {
+    answers = (
+      <ul className="list-group w-100">
+        {
+          question.answers.map(answer => {
+            return <li className="list-group-item" key={`answer-${answer.id}`}>{answer.content}</li>
+          })
+        }
+      </ul>
+    )
+  }
 
   const handleSubmit = event => {
     event.preventDefault()
@@ -44,21 +63,37 @@ export default function Question() {
 
   return (
     <Fragment>
-      <p className="text-right">
-        <Link to="/">Back</Link>
-      </p>
+      <div className="row">
+        <p className="text-right">
+          <Link to="/" className="btn btn-secondary">Back</Link>
+        </p>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="content" defaultValue={newAnswer.content} />
-      </form>
+      {question && <div>
+        <div className="row">
+          <h2>{question.content}</h2>
+        </div>
 
-      {
-        question &&
-          <div>
-            <p><strong>{question.content}</strong></p>
-            {question.answers && question.answers.map(answer => <p key={`answer-${answer.id}`}>{answer.content}</p>)}
-          </div>
-      }
+        <div className="row mb-2">
+          {answers}
+        </div>
+
+        <div className="row">
+          <form onSubmit={handleSubmit} className="w-100">
+            <textarea
+              className="form-control w-100 mb-2 mr-sm-2"
+              name="content"
+              defaultValue={newAnswer.content} />
+
+            <input
+              type="submit"
+              className="btn btn-primary w-100"
+              value="Answer!" />
+          </form>
+        </div>
+      </div>}
+
+      {!question && <Redirect to="/" />}
     </Fragment>
   )
 }

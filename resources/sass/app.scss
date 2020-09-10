@@ -1,5 +1,29 @@
 // Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+@font-face {
+  font-family: 'Luciole';
+  src: url("/fonts/Luciole-Regular.ttf") format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Luciole';
+  src: url("/fonts/Luciole-Bold.ttf") format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Luciole';
+  src: url("/fonts/Luciole-Bold-Italic.ttf") format('truetype');
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Luciole';
+  src: url("/fonts/Luciole-Regular-Italic.ttf") format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
 
 // Variables
 @import 'variables';

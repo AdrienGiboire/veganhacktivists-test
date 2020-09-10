@@ -12,21 +12,20 @@ import Questions from './Questions'
 function App() {
   return (
     <BrowserRouter>
-      <div className="container-sm">
-        <div className="row justify-content-center">
-          <div className="card">
-            <div className="card-header"><h1>Ask the goat anything</h1></div>
-            <div className="card-body">
-              <Switch>
-                <Route exact path="/">
-                  <Questions />
-                </Route>
-                <Route path="/question/:questionId">
-                  <Question />
-                </Route>
-              </Switch>
-            </div>
+      <div className="container">
+        <div className="col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+          <div className="row">
+            <h1 className="w-100 mt-3 text-center text-uppercase">Ask the goat anything</h1>
           </div>
+
+          <Switch>
+            <Route exact path="/">
+              <Questions />
+            </Route>
+            <Route path="/question/:questionId">
+              <Question />
+            </Route>
+          </Switch>
         </div>
       </div>
     </BrowserRouter>
