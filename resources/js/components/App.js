@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {
-  BrowserRouter as Router,
+  BrowserRouter,
   Route,
   Switch
 } from "react-router-dom"
@@ -11,8 +11,8 @@ import Questions from './Questions'
 
 function App() {
   return (
-    <Router>
-      <div className="container">
+    <BrowserRouter>
+      <div className="container-sm">
         <div className="row justify-content-center">
           <div className="card">
             <div className="card-header"><h1>Ask the goat anything</h1></div>
@@ -29,7 +29,7 @@ function App() {
           </div>
         </div>
       </div>
-    </Router>
+    </BrowserRouter>
   )
 }
 
