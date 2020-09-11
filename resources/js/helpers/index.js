@@ -6,9 +6,9 @@ export function resetValidStateForm (form, callback) {
   callback({ errors: {} })
 }
 
-export function invalidateForm (errors, callback) {
+export function invalidateForm (form, errors, callback) {
   for (const [field, message] of Object.entries(errors)) {
-    formRef.current.elements[field].classList.add('is-invalid')
+    form.elements[field].classList.add('is-invalid')
   }
 
   callback()

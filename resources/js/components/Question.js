@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { Link, Redirect, useParams } from 'react-router-dom'
 
-import { postData, resetValidStateForm } from '../helpers'
+import { invalidateForm, postData, resetValidStateForm } from '../helpers'
 
 export default function Question() {
   const formRef = useRef(null)
@@ -35,7 +35,7 @@ export default function Question() {
       return setQuestion({ ...question, answers: [ ...question.answers, data ] })
     }
 
-    const onError = errors => invalidateForm(errors)
+    const onError = errors => invalidateForm(formRef.current, errors)
 
     postData(`/api/questions/${question.id}/answers`, newAnswer, onSuccess, onError)
   }, [ newAnswer ])

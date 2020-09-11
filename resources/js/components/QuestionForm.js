@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 
 import { randomPick } from '../utils'
-import { postData, resetValidStateForm } from '../helpers'
+import { invalidateForm, postData, resetValidStateForm } from '../helpers'
 
 const PLACEHOLDERS = [
   'Where do you get your protein?',
@@ -31,7 +31,7 @@ export default function Questions(props) {
       return props.addQuestion(data)
     }
 
-    const onError = errors => invalidateForm(errors, () => setFormState({ errors }))
+    const onError = errors => invalidateForm(formRef.current, errors, () => setFormState({ errors }))
 
     postData('/api/questions', newQuestion, onSuccess, onError)
   }, [ newQuestion ])
