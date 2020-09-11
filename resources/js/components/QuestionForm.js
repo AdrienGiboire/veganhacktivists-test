@@ -1,12 +1,26 @@
 import React, { useRef, useState, useEffect } from 'react'
 
+import { randomPick } from '../utils'
+
+const PLACEHOLDERS = [
+  'Where do you get your protein?',
+  'What’s wrong with dairy and eggs?',
+  'Is vegan food more expensive?',
+  'Don’t plants feel pain?',
+  'Is “humanely raised” meat better?',
+  'Can you be an athlete on a vegan diet?',
+  'Don’t cows need to be milked?',
+  'What if you were stuck on a deserted island and had nothing else to eat?',
+  'Don’t you need meat to be healthy?',
+  'If everyone went vegan, what would happen to all the farm animals?',
+  'What about human suffering?'
+]
+
 export default function Questions(props) {
   const formRef = useRef(null)
   const textareaRef = useRef(null)
 
-  const [formState, setFormState] = useState({
-    errors: {}
-  })
+  const [formState, setFormState] = useState({ errors: {} })
   const invalidateForm = (errors) => {
     setFormState({ errors })
 
@@ -69,7 +83,7 @@ export default function Questions(props) {
           ref={textareaRef}
           name="content"
           defaultValue={newQuestion.content}
-          placeholder="Time for questions!" />
+          placeholder={randomPick(PLACEHOLDERS)} />
 
         <div className="invalid-feedback">
           {formState?.errors?.content && formState.errors.content[0]}
