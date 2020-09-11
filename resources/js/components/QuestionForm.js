@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 
 import { randomPick } from '../utils'
+import { postData, resetValidStateForm } from '../helpers'
 
 const PLACEHOLDERS = [
   'Where do you get your protein?',
@@ -20,55 +21,24 @@ export default function Questions(props) {
   const formRef = useRef(null)
   const textareaRef = useRef(null)
 
-  const [formState, setFormState] = useState({ errors: {} })
-  const invalidateForm = (errors) => {
-    setFormState({ errors })
-
-    for (const [field, message] of Object.entries(errors)) {
-      formRef.current.elements[field].classList.add('is-invalid')
-    }
-  }
-
-  const resetValidStateForm = () => {
-    setFormState({ errors: {} })
-
-    for (const field of formRef.current.elements) {
-      field.classList.remove('is-invalid')
-    }
-  }
-
-  const [newQuestion, setNewQuestion] = useState({})
+  const [ formState, setFormState ] = useState({ errors: {} })
+  const [ newQuestion, setNewQuestion ] = useState({})
   useEffect(() => {
     if (!newQuestion.content) return
 
-    const postData = async () => {
-      fetch('/api/questions', {
-        method: 'POST',
-        body: JSON.stringify({ ...newQuestion }),
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.errors) throw new Error(JSON.stringify(data.errors))
-
-          textareaRef.current.value = ''
-          return props.addQuestion(data)
-        })
-        .catch(error => {
-          const errors = JSON.parse(error.message)
-          invalidateForm(errors)
-        })
+    const onSuccess = data => {
+      textareaRef.current.value = ''
+      return props.addQuestion(data)
     }
 
-    postData()
-  }, [newQuestion])
+    const onError = errors => invalidateForm(errors, () => setFormState({ errors }))
+
+    postData('/api/questions', newQuestion, onSuccess, onError)
+  }, [ newQuestion ])
 
   const handleSubmit = event => {
     event.preventDefault()
-    resetValidStateForm()
+    resetValidStateForm(formRef.current, setFormState)
 
     const field = event.target.elements['content']
 
@@ -83,7 +53,10 @@ export default function Questions(props) {
           ref={textareaRef}
           name="content"
           defaultValue={newQuestion.content}
-          placeholder={randomPick(PLACEHOLDERS)} />
+          placeholder={randomPick(PLACEHOLDERS)}
+          required
+          title="5 characters minimum, ending with question mark."
+          minLength="5" />
 
         <div className="invalid-feedback">
           {formState?.errors?.content && formState.errors.content[0]}
