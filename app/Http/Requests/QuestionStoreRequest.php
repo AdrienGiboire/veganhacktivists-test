@@ -24,7 +24,7 @@ class QuestionStoreRequest extends FormRequest
     public function rules()
     {
         return [
-          'content' => ['required', 'ends_with:?']
+          'content' => ['required', 'ends_with:?', 'min:5']
         ];
     }
 }
