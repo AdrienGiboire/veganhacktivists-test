@@ -2,7 +2,27 @@ import React, { Fragment, useRef, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 export default function Questions() {
+  const formRef = useRef(null)
   const textareaRef = useRef(null)
+
+  const [formState, setFormState] = useState({
+    errors: {}
+  })
+  const invalidateForm = (errors) => {
+    setFormState({ errors })
+
+    for (const [field, message] of Object.entries(errors)) {
+      formRef.current.elements[field].classList.add('is-invalid')
+    }
+  }
+
+  const resetValidStateForm = () => {
+    setFormState({ errors: {} })
+
+    for (const field of formRef.current.elements) {
+      field.classList.remove('is-invalid')
+    }
+  }
 
   const [questions, setQuestions] = useState([])
   useEffect(() => {
@@ -28,12 +48,16 @@ export default function Questions() {
           'X-Requested-With': 'XMLHttpRequest'
         }
       })
-        .then(response => response.ok && response.json())
+        .then(response => response.json())
         .then(data => {
-          if (!data) return
+          if (data.errors) throw new Error(JSON.stringify(data.errors))
 
           textareaRef.current.value = ''
           return setQuestions([ data, ...questions ])
+        })
+        .catch(error => {
+          const errors = JSON.parse(error.message)
+          invalidateForm(errors)
         })
     }
 
@@ -42,6 +66,7 @@ export default function Questions() {
 
   const handleSubmit = event => {
     event.preventDefault()
+    resetValidStateForm()
 
     const field = event.target.elements['content']
 
@@ -59,9 +84,18 @@ export default function Questions() {
   return (
     <Fragment>
       <div className="row">
-        <form onSubmit={handleSubmit} className="w-100 mb-2 pb-2">
+        <form onSubmit={handleSubmit} className="w-100 mb-2 pb-2" ref={formRef}>
           <div className="form-group">
-            <textarea className="form-control form-control-lg" ref={textareaRef} name="content" defaultValue={newQuestion.content} placeholder="Time for questions!" />
+            <textarea
+              className="form-control form-control-lg"
+              ref={textareaRef}
+              name="content"
+              defaultValue={newQuestion.content}
+              placeholder="Time for questions!" />
+
+            <div className="invalid-feedback">
+              {formState?.errors?.content && formState.errors.content[0]}
+            </div>
           </div>
 
           <input type="submit" className="btn btn-primary btn-lg w-100" value="Ask!" />
