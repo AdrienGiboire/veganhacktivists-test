@@ -1,7 +1,9 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useRef, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 export default function Questions() {
+  const textareaRef = useRef(null)
+
   const [questions, setQuestions] = useState([])
   useEffect(() => {
     const fetchData = async () => {
@@ -21,10 +23,18 @@ export default function Questions() {
       fetch('/api/questions', {
         method: 'POST',
         body: JSON.stringify({ ...newQuestion }),
-        headers: { 'Content-Type': 'application/json' }
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
       })
         .then(response => response.ok && response.json())
-        .then(data => setQuestions([ data, ...questions ]))
+        .then(data => {
+          if (!data) return
+
+          textareaRef.current.value = ''
+          return setQuestions([ data, ...questions ])
+        })
     }
 
     postData()
@@ -36,8 +46,6 @@ export default function Questions() {
     const field = event.target.elements['content']
 
     setNewQuestion({ content: field.value })
-
-    field.value = ''
   }
 
   const questionsElement = questions.map((question) => {
@@ -53,7 +61,7 @@ export default function Questions() {
       <div className="row">
         <form onSubmit={handleSubmit} className="w-100 mb-2 pb-2">
           <div className="form-group">
-            <textarea className="form-control form-control-lg" name="content" defaultValue={newQuestion.content} placeholder="Time for questions!" />
+            <textarea className="form-control form-control-lg" ref={textareaRef} name="content" defaultValue={newQuestion.content} placeholder="Time for questions!" />
           </div>
 
           <input type="submit" className="btn btn-primary btn-lg w-100" value="Ask!" />

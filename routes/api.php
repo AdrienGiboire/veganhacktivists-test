@@ -3,12 +3,13 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Requests\QuestionStoreRequest;
 use App\Http\Resources\Question as QuestionResource;
 
 use App\Answer;
 use App\Question;
 
-Route::post('/questions', function (Request $request) {
+Route::post('/questions', function (QuestionStoreRequest $request) {
   $question = new Question;
   $question->content = $request->content;
   $question->save();

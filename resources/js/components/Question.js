@@ -29,7 +29,10 @@ export default function Question() {
       fetch(`/api/questions/${question.id}/answers`, {
         method: 'POST',
         body: JSON.stringify({ ...newAnswer }),
-        headers: { 'Content-Type': 'application/json' }
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
       })
         .then(response => response.ok && response.json())
         .then(data => setQuestion({ ...question, answers: [ ...question.answers, data ] }))
