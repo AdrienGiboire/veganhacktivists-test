@@ -1,7 +1,12 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { Link, Redirect, useParams } from 'react-router-dom'
 
+import { postData, resetValidStateForm } from '../helpers'
+
 export default function Question() {
+  const formRef = useRef(null)
+  const textareaRef = useRef(null)
+  const [ formState, setFormState ] = useState({ errors: {} })
   const { questionId } = useParams()
   const [ question, setQuestion ] = useState({})
 
@@ -21,25 +26,19 @@ export default function Question() {
     fetchData()
   }, [])
 
-  const [newAnswer, setNewAnswer] = useState({})
+  const [ newAnswer, setNewAnswer ] = useState({})
   useEffect(() => {
     if (!newAnswer.content) return
 
-    const postData = async () => {
-      fetch(`/api/questions/${question.id}/answers`, {
-        method: 'POST',
-        body: JSON.stringify({ ...newAnswer }),
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      })
-        .then(response => response.ok && response.json())
-        .then(data => setQuestion({ ...question, answers: [ ...question.answers, data ] }))
+    const onSuccess = data => {
+      textareaRef.current.value = ''
+      return setQuestion({ ...question, answers: [ ...question.answers, data ] })
     }
 
-    postData()
-  }, [newAnswer])
+    const onError = errors => invalidateForm(errors)
+
+    postData(`/api/questions/${question.id}/answers`, newAnswer, onSuccess, onError)
+  }, [ newAnswer ])
 
   let answers
   if (question && question.answers) {
@@ -56,6 +55,7 @@ export default function Question() {
 
   const handleSubmit = event => {
     event.preventDefault()
+    resetValidStateForm(formRef.current, setFormState)
 
     const field = event.target.elements['content']
 
@@ -82,11 +82,21 @@ export default function Question() {
         </div>
 
         <div className="row">
-          <form onSubmit={handleSubmit} className="w-100">
-            <textarea
-              className="form-control w-100 mb-2 mr-sm-2"
-              name="content"
-              defaultValue={newAnswer.content} />
+          <form onSubmit={handleSubmit} className="w-100" ref={formRef}>
+            <div className="form-group">
+              <textarea
+                ref={textareaRef}
+                className="form-control w-100 mb-2 mr-sm-2"
+                name="content"
+                defaultValue={newAnswer.content}
+                required
+                title="5 characters minimum."
+                minLength="5" />
+
+              <div className="invalid-feedback">
+                {formState?.errors?.content && formState.errors.content[0]}
+              </div>
+            </div>
 
             <input
               type="submit"

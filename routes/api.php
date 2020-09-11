@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Requests\AnswerStoreRequest;
 use App\Http\Requests\QuestionStoreRequest;
 use App\Http\Resources\Question as QuestionResource;
 
@@ -22,7 +23,7 @@ Route::get('/questions', function () {
   return QuestionResource::collection(Question::orderBy('created_at', 'DESC')->get());
 });
 
-Route::post('/questions/{question}/answers', function (Question $question, Request $request) {
+Route::post('/questions/{question}/answers', function (Question $question, AnswerStoreRequest $request) {
   $answer = new Answer();
   $answer->content = $request->content;
   $question->answers()->save($answer);
