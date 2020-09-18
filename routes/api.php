@@ -3,35 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Requests\AnswerStoreRequest;
-use App\Http\Requests\QuestionStoreRequest;
-use App\Http\Resources\Question as QuestionResource;
+Route::post('/questions', 'API\QuestionsController@store');
+Route::get('/questions', 'API\QuestionsController@index');
+Route::get('/questions/{question}', 'API\QuestionsController@show');
 
-use App\Answer;
-use App\Question;
-
-Route::post('/questions', function (QuestionStoreRequest $request) {
-  $question = new Question;
-  $question->content = $request->content;
-  $question->save();
-  $question->refresh();
-
-  return $question;
-});
-
-Route::get('/questions', function () {
-  return QuestionResource::collection(Question::orderBy('created_at', 'DESC')->get());
-});
-
-Route::post('/questions/{question}/answers', function (Question $question, AnswerStoreRequest $request) {
-  $answer = new Answer();
-  $answer->content = $request->content;
-  $question->answers()->save($answer);
-  $answer->refresh();
-
-  return $answer;
-});
-
-Route::get('/questions/{question}', function (Question $question) {
-  return new QuestionResource($question);
-});
+Route::post('/questions/{question}/answers', 'API\AnswersController@store');
